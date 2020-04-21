@@ -43,7 +43,7 @@
         </el-col>
         <el-col :span="4"
           ><div class="grid-content">
-            <el-button type="primary">查询</el-button>
+            <el-button type="primary" icon="el-icon-search">查询</el-button>
             <el-button type="success">+添加</el-button>
           </div></el-col
         >
@@ -73,11 +73,16 @@
           </template>
         </el-table-column>
         <el-table-column label="操作" width="360px">
-          <template>
-            <el-button size="small">草稿</el-button>
-            <el-button size="small">编辑</el-button>
-            <el-button size="small">删除</el-button>
-            <el-button size="small">置顶</el-button>
+          <template slot-scope="scope">
+            <el-button
+              size="small"
+              @click="isLoadingFunction(scope.row.ID)"
+              v-text="scope.row.isState == '2' ? '已上架' : '未上架'"
+              :type="scope.row.isState == '2' ? 'success' : 'danger'"
+            ></el-button>
+            <el-button size="small" type="info">编辑</el-button>
+            <el-button size="small" @click="isDeleteDateClass(scope.row)" type="primary">删除</el-button>
+            <el-button size="small" @click="onTopFunction(scope.row.ID)" v-text="scope.row.isTop == true ? '已置顶' : '未置顶'" :type="scope.row.isTop == true ? 'success' : 'warning'"></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -88,7 +93,7 @@
 <script>
 export default {
   created() {
-    this.getDate();
+    this.getDate(); //获取列表数据
   },
   data() {
     return {
@@ -150,6 +155,56 @@ export default {
     };
   },
   methods: {
+    async onTopFunction(idds) {
+      console.log(idds);
+      //一键置顶函数
+      const { data: res } = await this.axios({
+        url: '/VueHandler/CourseHandler?action=top',
+        method: 'post',
+        data: {
+          ID: idds,
+        },
+      });
+      if (res.err) return this.$message.error(res.err);
+      if (res.success) {
+        this.$message.success(res.success);
+        this.getDate(); //更新数据
+      }
+    },
+    //上下架函数
+    async isLoadingFunction(idds) {
+      const { data: res } = await this.axios({
+        url: '/VueHandler/CourseHandler?action=state',
+        method: 'post',
+        data: {
+          ID: idds,
+        },
+      });
+      if (res.err) return this.$message.error(res.err);
+      if (res.success) {
+        this.$message.success(res.success);
+        this.getDate(); //更新数据
+      }
+    },
+    //删除函数课程
+    isDeleteDateClass(val) {
+      this.$confirm(`是否删除《${val.Cname}》的课程？`)
+        .then(async () => {
+          const { data: res } = await this.axios({
+            url: '/VueHandler/CourseHandler?action=delete',
+            method: 'post',
+            data: {
+              ID: val.ID,
+            },
+          });
+          if (res.err) return this.$message.error(res.err);
+          if (res.success) {
+            this.$message.success(res.success);
+            this.getDate(); //更新数据
+          }
+        })
+        .catch(() => this.$message.warning(`已经取消对《${val.Cname}》删除`));
+    },
     async getDate() {
       //获取所有的数据进行添加
       const { data: res } = await this.axios({
@@ -165,6 +220,15 @@ export default {
       });
       console.log(res);
       this.tableData = res.data.list;
+      this.getClassifyDate();
+    },
+    async getClassifyDate() {
+      //获取专业分类数据
+      let { data: res } = await this.axios({
+        url: '/VueHandler/CourseHandler?action=getcategory',
+        method: 'get',
+      });
+      console.log(res);
     },
   },
 };
