@@ -1259,14 +1259,16 @@ router.post('/UpLoadPicHandler', function (req, res) {
         if (target[target.length - 1] == 'jpg' || target[target.length - 1] == 'png' || target[target.length - 1] == 'gif' || target[target.length - 1] == 'jpeg') {
             var obj = {
                 cacheName: '/DownLoadPicHandler?pathName=' + pathName,
-                success: "成功"
+                success: "成功",
+                pictures:pictures
             }
             var str = JSON.stringify(obj);
             res.end(str);
         } else {
             var obj = {
                 cacheName: '/DownLoadPicHandler?pathName=' + pathName,
-                err: "失败"
+                err: "失败",
+                pictures:pictures
             }
             var str = JSON.stringify(obj);
             res.end(str);

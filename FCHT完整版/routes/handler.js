@@ -267,7 +267,13 @@ router.post('/AdminLoginAndRegHandler', function (req, res) {
         req.session.user.name = req.body.userName;
         req.session.user.password = password;
         req.session.user.id = data[0]._id;
-        res.end('{"success":"true"}');
+        console.log(req.session)
+        res.send({
+          success:"登录成功",
+          tokenId:req.session.user.id  //返回用户id 
+        });
+
+
       }
 
     });
@@ -317,6 +323,8 @@ router.get('/AdminHandler',function(req,res){
   if(req.query.action=='show'){
     handler(req, res, "Administor", null,function(arr){
       console.log(req.query.searchText);
+      console.log(req.query.pageStart);
+      console.log(typeof req.query.pageStart);
       var selector = !req.query.searchText?{tokenId:{$gt:arr.length-(parseInt(req.query.pageStart)*3-3)-3,$lte:arr.length-(parseInt(req.query.pageStart)*3-3)}}:{ turename: { $regex: '.*'+req.query.searchText+'.*', $options: 'i' } } ;
      console.log(selector);
       handler(req, res, "Administor",selector ,function(data){
@@ -356,6 +364,7 @@ router.get('/AdminHandler',function(req,res){
   }else if(req.query.action=='lockuser'){
     //获取与tokenId对应的该条数据
     req.query.action = 'show';
+    console.log(req.query.tokenId);
     handler(req, res, "studentList",{tokenId:parseInt(req.query.tokenId)},function(da){
       req.query.action = 'update';
       var selectors = [
@@ -516,13 +525,13 @@ router.post('/AdminHandler',function(req,res){
     //获取学员列表的数据总数
     handler(req, res, "studentList", null,function(arr){
      if(isNullObj(selector)){
-       selector={tokenId:{$gt:arr.length-(parseInt(req.body.pageStart)*6-6)-6,$lte:arr.length-(parseInt(req.body.pageStart)*6-6)}};
+       selector={tokenId:{$gt:arr.length-(parseInt(req.body.pageStart)*3-3)-3,$lte:arr.length-(parseInt(req.body.pageStart)*3-3)}};
      }
       //查询数据库获取结果集
       handler(req, res, "studentList",selector ,function(data){
           var obj = {
             data:{
-              pageSize:6,
+              pageSize:3,
               count:arr.length,
               list:data
             }
@@ -1227,23 +1236,26 @@ router.post('/UpLoadPicHandler',function(req,res){
 
             }
           });
+          var target = files[Object.getOwnPropertyNames(files)[0]].path.split('.');
+          if(target[target.length-1]=='jpg'||target[target.length-1]=='png'||target[target.length-1]=='gif'||target[target.length-1]=='jpeg'){
+            var obj = {
+              cacheName:'/DownLoadPicHandler?pathName='+pathName,
+              success:"成功",
+              pictures:pictures
+            }
+            var str = JSON.stringify(obj);
+            res.end(str);
+          }else{
+            var obj = {
+              cacheName:'/DownLoadPicHandler?pathName='+pathName,
+              err:"失败",
+              pictures:pictures
+            }
+            var str = JSON.stringify(obj);
+            res.end(str);
+          }
         });
-    var target = files[Object.getOwnPropertyNames(files)[0]].path.split('.');
-    if(target[target.length-1]=='jpg'||target[target.length-1]=='png'||target[target.length-1]=='gif'||target[target.length-1]=='jpeg'){
-      var obj = {
-        cacheName:'/DownLoadPicHandler?pathName='+pathName,
-        success:"成功"
-      }
-      var str = JSON.stringify(obj);
-      res.end(str);
-    }else{
-      var obj = {
-        cacheName:'/DownLoadPicHandler?pathName='+pathName,
-        err:"失败"
-      }
-      var str = JSON.stringify(obj);
-      res.end(str);
-    }
+   
 
   });
 });

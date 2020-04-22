@@ -41,7 +41,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item>
-                <el-button type="success" @click="submitForm('ruleForm')">保存</el-button>
+                <el-button type="success" @click="saveClassDetail">保存</el-button>
               </el-form-item>
             </el-form>
           </div></el-col
@@ -49,29 +49,22 @@
         <el-col :span="12">
           <div class="grid-content">
             <el-form>
-              <el-form-item label="课程封面上传">
+              <el-form-item label="课程封面上传：">
                 <!-- 图片上传 -->
-                <el-upload action="#" list-type="picture-card" :auto-upload="false">
-                  <i slot="default" class="el-icon-plus"></i>
-                  <div slot="file" slot-scope="{ file }">
-                    <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                    <span class="el-upload-list__item-actions">
-                      <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                        <i class="el-icon-zoom-in"></i>
-                      </span>
-                      <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleDownload(file)">
-                        <i class="el-icon-download"></i>
-                      </span>
-                      <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                        <i class="el-icon-delete"></i>
-                      </span>
-                    </span>
-                  </div>
-                </el-upload>
-                <el-dialog :visible.sync="dialogVisible">
-                  <img width="100%" :src="dialogImageUrl" alt="" />
-                </el-dialog> </el-form-item
-            ></el-form>
+                <div class="updateInput" @click="dialogVisible = true">
+                  <i class="el-icon-plus"></i>
+                  <img :src="imgdateUrl" v-if="imgdateUrl != '' ? true : false" />
+                </div>
+                <!-- 图片上传框逻辑 -->
+                <el-dialog title="是否上传课程封面？" :visible.sync="dialogVisible" width="50%" :before-close="setUpdateDialog">
+                  <input :id="uuids" @change="onFileChange($event, uuids)" accept="image/gif,image/jpeg,image/x-png" type="file" />
+                  <span slot="footer" class="dialog-footer">
+                    <el-button @click="handle_isOK('cancel')">取 消</el-button>
+                    <el-button type="primary" @click="handle_isOK('yes')">确 定</el-button>
+                  </span>
+                </el-dialog>
+              </el-form-item>
+            </el-form>
           </div>
         </el-col>
       </el-row>
@@ -113,12 +106,20 @@
 
 <script>
 import editorCom from '@/components/Editor';
+//引入uid处理数据
+import classStore from '../store/classDateHandle.js';
 export default {
   components: { editorCom },
+  computed: {
+    uuids() {
+      return classStore.state.uuids; //请求uuid名称
+    },
+  },
   data() {
     return {
       addMuLv: [], //添加目录
       addVideo: [], //增加视频
+      imgdateUrl: '',
       addClassForm: {
         className: '',
         classDetail: '',
@@ -187,19 +188,65 @@ export default {
       dialogImageUrl: '',
       dialogVisible: false,
       disabled: false,
+      cacheName: '', //图片名称
     };
   },
   methods: {
-    //图片上传方法
-    handleRemove(file) {
-      console.log(file);
-    },
-    handlePictureCardPreview(file) {
-      this.dialogImageUrl = file.url;
+    //文件上传框隐藏和显示
+    setUpdateDialog() {
       this.dialogVisible = true;
     },
-    handleDownload(file) {
-      console.log(file);
+    async saveClassDetail() {
+      //数据提交保存函数
+      const { data: res } = await this.axios({
+        url: '/VueHandler/CourseHandler?action=add',
+        method: 'post',
+        data: {
+          Cname: this.addClassForm.className,
+          Cdescribe: this.addClassForm.classDetail,
+          Cprice: this.addClassForm.classPrice,
+          CategoryOne: '',
+          CategoryTwo: '',
+          CategoryThree: '',
+          Cpic: this.cacheName,
+        },
+      });
+      if (res.err) return this.$message.error(res.err);
+      if (res.success) {
+        this.$message.success(res.success);
+        this.addClassForm = {}; //清空输入框
+      }
+    },
+    handle_isOK(mode) {
+      //确定取消事件
+      if (mode == 'yes' || mode == 'cancel') {
+        this.dialogVisible = false;
+      }
+    },
+    async onFileChange(e, item) {
+      console.log(e, item);
+      var form = new FormData(); //格式化表单数据
+      if (document.getElementById(item).files[0]) {
+        //参数为上传控件的id和该控件的数据
+        //           id            上传的图片
+        form.append(item, document.getElementById(item).files[0]);
+      }
+      console.log(form);
+      //处理图片上传
+      this.axios
+        .post('/VueHandler/UpLoadPicHandler', form, {
+          method: 'post',
+          headers: { 'Content-Type': 'multipart/form-data' },
+        })
+        .then((res) => {
+          console.log(res);
+          this.cacheName = res.data.cacheName; //路径图片名称
+          if (res.data.success) this.$message.success('图片上传成功');
+          if (res.data.err) this.$message.success('图片上传失败');
+          const Handledata = res.data.pictures.contents.data;
+          this.imgdateUrl = 'data:image/png;base64,' + btoa(new Uint8Array(Handledata.Handledata).reduce((Handledata, byte) => Handledata + String.fromCharCode(byte), ''));
+          console.log(this.imgdateUrl)
+        });
     },
   },
 };
@@ -236,5 +283,20 @@ export default {
 }
 .el-select {
   width: 120px;
+}
+.el-form-item {
+  .updateInput {
+    font-size: 28px;
+    color: #8c939d;
+    width: 178px;
+    height: 178px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    line-height: 178px;
+    text-align: center;
+  }
 }
 </style>

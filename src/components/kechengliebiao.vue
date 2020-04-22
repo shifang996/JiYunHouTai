@@ -11,7 +11,7 @@
       <el-row :gutter="24" type="flex" align="middle">
         <el-col :span="4"
           ><div class="grid-content ">
-            <el-input v-model="courseNameSearch" placeholder="课程名称搜索"></el-input></div
+            <el-input v-model="searchValForm.val" placeholder="课程名称搜索"></el-input></div
         ></el-col>
         <el-col :span="3"
           ><div class="grid-content " style="font-size: 20px;">
@@ -43,8 +43,8 @@
         </el-col>
         <el-col :span="4"
           ><div class="grid-content">
-            <el-button type="primary" icon="el-icon-search">查询</el-button>
-            <el-button type="success">+添加</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="searchText">查询</el-button>
+            <el-button type="success" @click="addClassDateWeb">+添加</el-button>
           </div></el-col
         >
       </el-row>
@@ -86,6 +86,19 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 分液器 -->
+      <div class="block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[3, 6, 9]"
+          :page-size="100"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="pageTotal"
+        >
+        </el-pagination>
+      </div>
     </el-card>
   </div>
 </template>
@@ -97,6 +110,15 @@ export default {
   },
   data() {
     return {
+      searchValForm: {
+        val: '',
+        checkOne: '',
+        checkTwo: '',
+        checkThree: '',
+      },
+      currentPage: 1, //当前页
+      pageSize: 1, //每页显示
+      pageTotal: 1, //总页数
       courseNameSearch: '',
       classNameCheck: '级部选择',
       className: [
@@ -155,6 +177,22 @@ export default {
     };
   },
   methods: {
+    handleSizeChange(val) {
+      //处理每页显示页数
+      console.log(val);
+    },
+    handleCurrentChange(val) {
+      //条转页数
+      console.log(val);
+      this.currentPage = val;
+      this.getDate();
+    },
+    addClassDateWeb() {
+      //网站跳转数据
+      this.$router.push({
+        name: 'kechengbianji',
+      });
+    },
     async onTopFunction(idds) {
       console.log(idds);
       //一键置顶函数
@@ -188,6 +226,7 @@ export default {
     },
     //删除函数课程
     isDeleteDateClass(val) {
+      console.log(val);
       this.$confirm(`是否删除《${val.Cname}》的课程？`)
         .then(async () => {
           const { data: res } = await this.axios({
@@ -195,11 +234,12 @@ export default {
             method: 'post',
             data: {
               ID: val.ID,
+              _id: val._id,
             },
           });
           if (res.err) return this.$message.error(res.err);
           if (res.success) {
-            this.$message.success(res.success);
+            this.$message.success('该条数据已经删除成功！！！');
             this.getDate(); //更新数据
           }
         })
@@ -211,16 +251,23 @@ export default {
         url: '/VueHandler/CourseHandler?action=show',
         method: 'post',
         data: {
-          searchText: '',
+          searchText: this.searchValForm.val,
           CategoryOne: '',
           CategoryTwo: '',
           CategoryThree: '',
-          pageStart: 1,
+          pageStart: this.currentPage,
         },
       });
       console.log(res);
+      this.pageSize = res.data.pageSize;
+      this.pageTotal = res.data.count;
       this.tableData = res.data.list;
       this.getClassifyDate();
+    },
+    async searchText() {
+      //搜索方法
+      this.getDate(); //调用渲染
+      this.searchValForm = {}; //清空搜索对象
     },
     async getClassifyDate() {
       //获取专业分类数据
