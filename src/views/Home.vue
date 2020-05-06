@@ -36,13 +36,13 @@
                   <span>课程管理</span>
                 </template>
                 <el-menu-item-group>
-                  <el-menu-item index="2-1"  route="/kechengliebiao">课程列表</el-menu-item>
+                  <el-menu-item index="2-1" route="/kechengliebiao">课程列表</el-menu-item>
                 </el-menu-item-group>
                 <el-menu-item-group>
                   <el-menu-item index="2-2" route="/kechengbianji">课程编辑</el-menu-item>
                 </el-menu-item-group>
                 <el-menu-item-group>
-                  <el-menu-item index="2-3">视频管理</el-menu-item>
+                  <el-menu-item index="2-3" route="/shipinguanli">视频管理</el-menu-item>
                 </el-menu-item-group>
               </el-submenu>
               <el-menu-item index="3">
@@ -53,7 +53,7 @@
                 <i class="iconfont  icon-jiahao"></i>
                 <span slot="title">课程添加</span>
               </el-menu-item>
-              <el-menu-item index="5">
+              <el-menu-item index="5" route="/yonghuzhuce">
                 <i class="iconfont  icon-sigelanmulianjieziyuan"></i>
                 <span slot="title">用户注册</span>
               </el-menu-item>
@@ -126,7 +126,7 @@ export default {
         url: '/VueHandler/AdminHandler?action=returnuserinfo',
         method: 'post',
       });
-      console.log(res)
+      console.log(res);
     },
     async loginOutUsers() {
       //退出登录

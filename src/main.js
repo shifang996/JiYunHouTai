@@ -19,6 +19,12 @@ import 'quill/dist/quill.core.css';
 import 'quill/dist/quill.snow.css';
 import 'quill/dist/quill.bubble.css';
 Vue.use(VueQuillEditor);
+//引入echarts
+import echarts from 'echarts';
+Vue.prototype.$echarts = echarts;
+//引入qs
+import qs from 'qs';
+Vue.prototype.$qs = qs;
 
 new Vue({
   router,

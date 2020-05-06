@@ -8,6 +8,8 @@ import Welcome from '../components/welcome.vue';
 import ErrorUrl from '../components/404Error.vue';
 import KeChengLieBiao from '../components/kechengliebiao.vue';
 import KeChengBianJi from '../components/kechengbianji.vue';
+import ShiPinGuanli from '../components/shipinguanli.vue';
+import YongHuZhuCe from '../components/yonghuzhuce.vue';
 
 Vue.use(VueRouter);
 
@@ -55,6 +57,16 @@ const routes = [
         path: '/kechengbianji',
         name: 'kechengbianji',
         component: KeChengBianJi,
+      },
+      {
+        path: '/shipinguanli',
+        name: 'shipinguanli',
+        component: ShiPinGuanli,
+      },
+      {
+        path: '/yonghuzhuce',
+        name: 'yonghuzhuce',
+        component: YongHuZhuCe,
       },
     ],
   },
