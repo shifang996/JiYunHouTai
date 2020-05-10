@@ -9,7 +9,10 @@
       </el-breadcrumb>
       <el-row>
         <el-col :span="5">
-          <el-input v-model="studentList.username" placeholder="用户名"></el-input>
+          <el-input
+            v-model="studentList.username"
+            placeholder="用户名"
+          ></el-input>
         </el-col>
         <el-col :span="5">
           <el-input v-model="studentList.email" placeholder="邮箱"></el-input>
@@ -20,29 +23,46 @@
         <el-col :span="8">
           <el-button type="success" @click="checkedStudentUser">查询</el-button>
           <el-button type="primary" @click="addStudenUser">添加</el-button>
-          <span style="margin-left: 6px;">注意：依次写下相关字段进行相关的操作!</span>
+          <span style="margin-left: 6px;"
+            >注意：依次写下相关字段进行相关的操作!</span
+          >
         </el-col>
       </el-row>
       <!-- 表格渲染 -->
       <el-row :gutter="20">
-        <el-col :span="24"> <i class="el-icon-menu"></i><span>学员列表</span></el-col>
+        <el-col :span="24">
+          <i class="el-icon-menu"></i><span>学员列表</span></el-col
+        >
       </el-row>
       <!-- 表格区域 -->
       <el-table :data="tableData" style="width: 100%" border stripe>
-        <el-table-column prop="tokenId" label="用户TOKENID" width="150"> </el-table-column>
-        <el-table-column prop="userName" label="用户" width="180"> </el-table-column>
-        <el-table-column prop="email" label="邮箱" width="180"> </el-table-column>
-        <el-table-column prop="phone" label="手机" width="180"> </el-table-column>
-        <el-table-column prop="createAt" label="创建日期" width="180"> </el-table-column>
+        <el-table-column prop="tokenId" label="用户TOKENID" width="150">
+        </el-table-column>
+        <el-table-column prop="userName" label="用户" width="180">
+        </el-table-column>
+        <el-table-column prop="email" label="邮箱" width="180">
+        </el-table-column>
+        <el-table-column prop="phone" label="手机" width="180">
+        </el-table-column>
+        <el-table-column prop="createAt" label="创建日期" width="180">
+        </el-table-column>
         <el-table-column label="状态" width="180">
           <template slot-scope="scope">
-            <el-tag v-if="scope.row.isstate == false" type="danger">冻结</el-tag>
-            <el-tag v-if="scope.row.isstate == true" type="success">解冻</el-tag>
+            <el-tag v-if="scope.row.isstate == false" type="danger"
+              >冻结</el-tag
+            >
+            <el-tag v-if="scope.row.isstate == true" type="success"
+              >解冻</el-tag
+            >
           </template>
         </el-table-column>
         <el-table-column label="操作" width="180">
           <template slot-scope="scope">
-            <el-button type="primary" @click="unfreezeMode(scope.row)" v-text="scope.row.isstate ? '冻结' : '解冻'"></el-button>
+            <el-button
+              type="primary"
+              @click="unfreezeMode(scope.row)"
+              v-text="scope.row.isstate ? '冻结' : '解冻'"
+            ></el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -72,13 +92,13 @@ export default {
       NowPageNum: 1,
       tableData: [],
       studentList: {
-        username: '',
-        email: '',
-        phone: '',
+        username: "",
+        email: "",
+        phone: ""
       },
       isCold: false,
       totalCount: 0,
-      showPageSize: 0,
+      showPageSize: 0
     };
   },
   methods: {
@@ -96,35 +116,35 @@ export default {
     async getStudentDateList() {
       //获取所有学员数据
       const { data: res } = await this.axios({
-        url: '/VueHandler/AdminHandler?action=usershow',
-        method: 'post',
+        url: "/VueHandler/AdminHandler?action=usershow",
+        method: "post",
         data: {
           pageStart: this.NowPageNum,
           userName: this.studentList.username,
           email: this.studentList.email,
-          phone: this.studentList.phone,
-        },
+          phone: this.studentList.phone
+        }
       });
       console.log(res);
       this.tableData = res.data.list;
       this.totalCount = res.data.count;
       this.showPageSize = res.data.pageSize;
       this.studentList = {
-        username: '',
-        email: '',
-        phone: '',
+        username: "",
+        email: "",
+        phone: ""
       };
     },
     async addStudenUser() {
       // 学员添加方法
       const { data: res } = await this.axios({
-        url: '/VueHandler/AdminHandler?action=adduser',
-        method: 'post',
+        url: "/VueHandler/AdminHandler?action=adduser",
+        method: "post",
         data: {
           addemail: this.studentList.email,
           adduserName: this.studentList.username,
-          addphone: this.studentList.phone,
-        },
+          addphone: this.studentList.phone
+        }
       });
       console.log(res);
       if (res.err) return this.$message.error(res.err);
@@ -133,9 +153,9 @@ export default {
         this.isCold = !this.isCold;
         // 清空输入框
         this.studentList = {
-          username: '',
-          email: '',
-          phone: '',
+          username: "",
+          email: "",
+          phone: ""
         };
         this.getStudentDateList(); //更新数据
       }
@@ -144,11 +164,11 @@ export default {
       //解冻相关的用户
       console.log(date);
       const { data: res } = await this.axios({
-        url: '/VueHandler/AdminHandler?action=lockuser',
-        method: 'get',
+        url: "/VueHandler/AdminHandler?action=lockuser",
+        method: "get",
         params: {
-          tokenId: date.tokenId,
-        },
+          tokenId: date.tokenId
+        }
       });
       if (res.err) return this.$message.error(res.err);
       if (res.success) {
@@ -156,8 +176,8 @@ export default {
         this.isCold = !this.isCold;
         this.getStudentDateList(); //更新数据
       }
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

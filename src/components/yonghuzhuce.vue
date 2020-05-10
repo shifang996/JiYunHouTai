@@ -21,15 +21,25 @@
             </el-form-item>
             <el-form-item label="权限：">
               <el-select v-model="reg.modeVal" placeholder="请选择">
-                <el-option v-for="item in reg.modeValoptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option
+                  v-for="item in reg.modeValoptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                >
+                </el-option>
               </el-select>
             </el-form-item>
           </el-form>
         </el-col>
       </el-row>
       <div class="handle">
-        <el-button type="primary" @click="handle_addUser('add')">提交</el-button>
-        <el-button type="warning" @click="handle_addUser('cancel')">取消</el-button>
+        <el-button type="primary" @click="handle_addUser('add')"
+          >提交</el-button
+        >
+        <el-button type="warning" @click="handle_addUser('cancel')"
+          >取消</el-button
+        >
       </div>
     </el-card>
   </div>
@@ -41,44 +51,45 @@ export default {
   data() {
     return {
       reg: {
-        username: '',
-        realname: '',
-        phone: '',
-        pwd: '',
-        modeVal: '',
+        username: "",
+        realname: "",
+        phone: "",
+        pwd: "",
+        modeVal: "",
         modeValoptions: [
           {
             value: 1,
-            label: '系统管理员',
+            label: "系统管理员"
           },
           {
             value: 2,
-            label: '课程管理员',
-          },
-        ],
-      },
+            label: "课程管理员"
+          }
+        ]
+      }
     };
   },
   methods: {
     async handle_addUser(mode) {
-      if (mode == 'add') {
+      if (mode == "add") {
         const { data: res } = await this.axios({
-          url: 'http://localhost:3000/VueHandler/AdminLoginAndRegHandler?action=add',
-          method: 'post',
+          url:
+            "http://localhost:3000/VueHandler/AdminLoginAndRegHandler?action=add",
+          method: "post",
           data: this.$qs.stringify({
             userName: this.reg.username,
             turename: this.reg.realname,
             phone: this.reg.phone,
             password: this.reg.pwd,
-            powerCode: this.reg.modeVal,
-          }),
+            powerCode: this.reg.modeVal
+          })
         });
         console.log(res);
       } else {
         this.reg = {};
       }
-    },
-  },
+    }
+  }
 };
 </script>
 <style lang="less" scoped>

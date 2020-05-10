@@ -1,7 +1,7 @@
 // 课程vuex
-import Vue from 'vue';
-import Vuex from 'vuex';
-import axios from 'axios';
+import Vue from "vue";
+import Vuex from "vuex";
+import axios from "axios";
 Vue.use(Vuex);
 // axios.defaults.baseURL = "http://localhost:3000";
 // var $axios = axios.create({
@@ -15,7 +15,9 @@ var uuidfn = function() {
 
   var len = 8;
   var radix = 0;
-  var chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.split('');
+  var chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split(
+    ""
+  );
   var uuid = [],
     i;
   radix = radix || chars.length;
@@ -28,8 +30,8 @@ var uuidfn = function() {
     var r;
 
     // rfc4122 requires these characters
-    uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-    uuid[14] = '4';
+    uuid[8] = uuid[13] = uuid[18] = uuid[23] = "-";
+    uuid[14] = "4";
 
     // Fill in random data.  At i==19 set the high bits of clock sequence as
     // per rfc4122, sec. 4.1.5
@@ -41,44 +43,44 @@ var uuidfn = function() {
     }
   }
 
-  return uuid.join('');
+  return uuid.join("");
 };
 const state = {
-  getcategory: '', //分类数据
+  getcategory: "", //分类数据
   uuids: uuidfn(),
   PicList: {
     list: [
       {
         uuids: uuidfn(),
-        imags: { value: '' }, //图片数据
-        aTextU: '上传', //上传按钮名称
-        aTextC: '清除', //清除按钮名称
-        defaultStr: { value: '视频应小于1G' },
+        imags: { value: "" }, //图片数据
+        aTextU: "上传", //上传按钮名称
+        aTextC: "清除", //清除按钮名称
+        defaultStr: { value: "视频应小于1G" }
       },
-      {},
-    ],
-  },
+      {}
+    ]
+  }
 };
 const mutations = {
   getlist(state) {
     axios({
-      url: '/VueHandler/CourseHandler?action=getcategory',
-      method: 'get',
-    }).then((res) => {
+      url: "/VueHandler/CourseHandler?action=getcategory",
+      method: "get"
+    }).then(res => {
       console.log(res);
       state.getcategory = res.data;
     });
-  },
+  }
 };
 const getters = {
   getcategory(state) {
     return state.getcategory;
-  },
+  }
 };
 const actions = {};
 export default new Vuex.Store({
   state,
   mutations,
   getters,
-  actions,
+  actions
 });

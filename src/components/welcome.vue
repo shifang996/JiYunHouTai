@@ -2,8 +2,15 @@
   <div style="font-size: 32px;">
     <h1>用户：{{ loginUser }}，欢迎登陆！</h1>
     <el-row type="flex" style="margin-top: 32px;background-color: gainsboro;">
-      <el-col> <div id="myChart" :style="{ width: '500px', height: '400px' }"></div></el-col>
-      <el-col><div id="titleQualCharts" :style="{ width: '500px', height: '400px' }"></div></el-col>
+      <el-col>
+        <div id="myChart" :style="{ width: '500px', height: '400px' }"></div
+      ></el-col>
+      <el-col
+        ><div
+          id="titleQualCharts"
+          :style="{ width: '500px', height: '400px' }"
+        ></div
+      ></el-col>
     </el-row>
   </div>
 </template>
@@ -16,13 +23,13 @@ export default {
   },
   data() {
     return {
-      loginUser: '',
+      loginUser: "",
       userCount: 0,
       studentCount: 0,
-      handle_value: [{ name: '111', value: 1 }],
+      handle_value: [{ name: "111", value: 1 }],
       handle_stu: [],
       stuPage: 1,
-      stuList: [],
+      stuList: []
     };
   },
   mounted() {},
@@ -30,23 +37,23 @@ export default {
     async getUserStudentCount() {
       //获取系统用户数据
       const { data: res } = await this.axios({
-        url: '/VueHandler/AdminHandler?action=show',
-        method: 'get',
+        url: "/VueHandler/AdminHandler?action=show",
+        method: "get",
         params: {
-          searchText: '',
-          pageStart: 1,
-        },
+          searchText: "",
+          pageStart: 1
+        }
       });
       // console.log(res);
       const { data: resb } = await this.axios({
-        url: '/VueHandler/AdminHandler?action=usershow',
-        method: 'post',
+        url: "/VueHandler/AdminHandler?action=usershow",
+        method: "post",
         data: {
           pageStart: this.stuPage,
-          userName: '',
-          email: '',
-          phone: '',
-        },
+          userName: "",
+          email: "",
+          phone: ""
+        }
       });
       console.log(resb);
       //获取用户总数
@@ -55,18 +62,20 @@ export default {
       console.log(this.userCount, this.studentCount);
       this.handle_value = [
         {
-          name: '系统管理员',
-          value: this.userCount,
+          name: "系统管理员",
+          value: this.userCount
         },
         {
-          name: '学员',
-          value: this.studentCount,
-        },
+          name: "学员",
+          value: this.studentCount
+        }
       ];
       //调用echarts
       this.drawLine();
       //处理学生人数解锁和没有解锁数据
-      const handle_countSize = Math.ceil(this.studentCount / Number(resb.data.pageSize)); //计算出数据页数
+      const handle_countSize = Math.ceil(
+        this.studentCount / Number(resb.data.pageSize)
+      ); //计算出数据页数
       console.log(handle_countSize);
       if (this.stuPage <= handle_countSize) {
         for (var i = 0; i < handle_countSize; i++) {
@@ -79,7 +88,7 @@ export default {
       console.log(this.stuList);
       var locked = 0;
       var unlocked = 0;
-      this.stuList.forEach((element) => {
+      this.stuList.forEach(element => {
         if (element.isstate) {
           locked++;
         } else {
@@ -89,111 +98,113 @@ export default {
       console.log(locked, unlocked);
       this.handle_stu = [
         {
-          name: '冻结',
-          value: locked,
+          name: "冻结",
+          value: locked
         },
         {
-          name: '未冻结',
-          value: unlocked,
-        },
+          name: "未冻结",
+          value: unlocked
+        }
       ];
       this.pieStu();
     },
     drawLine() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById('myChart'));
+      let myChart = this.$echarts.init(document.getElementById("myChart"));
       // 绘制图表
       myChart.setOption({
         title: [
           {
-            subtext: '管理员学员饼态显示图',
-            left: '16.67%',
-            top: '75%',
-            textAlign: 'center',
-          },
+            subtext: "管理员学员饼态显示图",
+            left: "16.67%",
+            top: "75%",
+            textAlign: "center"
+          }
         ],
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)',
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
         },
         legend: {
-          orient: 'vertical',
+          orient: "vertical",
           left: 10,
-          data: ['系统管理员', '学员'],
+          data: ["系统管理员", "学员"]
         },
         series: [
           {
             name: [],
-            type: 'pie',
-            radius: ['50%', '70%'],
+            type: "pie",
+            radius: ["50%", "70%"],
             avoidLabelOverlap: false,
             label: {
               show: false,
-              position: 'center',
+              position: "center"
             },
             emphasis: {
               label: {
                 show: true,
-                fontSize: '30',
-                fontWeight: 'bold',
-              },
+                fontSize: "30",
+                fontWeight: "bold"
+              }
             },
             labelLine: {
-              show: false,
+              show: false
             },
-            data: this.handle_value,
-          },
-        ],
+            data: this.handle_value
+          }
+        ]
       });
     },
     pieStu() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById('titleQualCharts'));
+      let myChart = this.$echarts.init(
+        document.getElementById("titleQualCharts")
+      );
       // 绘制图表
       myChart.setOption({
         title: [
           {
-            subtext: '学员显示图',
-            left: '16.67%',
-            top: '75%',
-            textAlign: 'center',
-          },
+            subtext: "学员显示图",
+            left: "16.67%",
+            top: "75%",
+            textAlign: "center"
+          }
         ],
         tooltip: {
-          trigger: 'item',
-          formatter: '{a} <br/>{b}: {c} ({d}%)',
+          trigger: "item",
+          formatter: "{a} <br/>{b}: {c} ({d}%)"
         },
         legend: {
-          orient: 'vertical',
+          orient: "vertical",
           left: 10,
-          data: ['冻结', '未冻结'],
+          data: ["冻结", "未冻结"]
         },
         series: [
           {
             name: [],
-            type: 'pie',
-            radius: ['50%', '70%'],
+            type: "pie",
+            radius: ["50%", "70%"],
             avoidLabelOverlap: false,
             label: {
               show: false,
-              position: 'center',
+              position: "center"
             },
             emphasis: {
               label: {
                 show: true,
-                fontSize: '30',
-                fontWeight: 'bold',
-              },
+                fontSize: "30",
+                fontWeight: "bold"
+              }
             },
             labelLine: {
-              show: false,
+              show: false
             },
-            data: this.handle_stu,
-          },
-        ],
+            data: this.handle_stu
+          }
+        ]
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped></style>

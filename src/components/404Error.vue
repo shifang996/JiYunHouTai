@@ -6,7 +6,9 @@
       <router-link to="/home">
         <el-button type="primary" size="large">返回首页</el-button>
       </router-link>
-      <el-button class="error-btn" type="primary" size="large" @click="goBack">返回上一页</el-button>
+      <el-button class="error-btn" type="primary" size="large" @click="goBack"
+        >返回上一页</el-button
+      >
     </div>
   </div>
 </template>
@@ -16,8 +18,8 @@ export default {
   methods: {
     goBack() {
       this.$router.go(-1);
-    },
-  },
+    }
+  }
 };
 </script>
 

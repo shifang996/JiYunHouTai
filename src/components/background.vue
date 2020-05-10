@@ -9,8 +9,8 @@ export default {
   mounted: function() {
     //挂载后执行的方法
     //    获取canvas
-    var canvas = document.getElementsByClassName('bgCanvas')[0],
-      ctx = canvas.getContext('2d'); //2d的画板
+    var canvas = document.getElementsByClassName("bgCanvas")[0],
+      ctx = canvas.getContext("2d"); //2d的画板
     //    设置宽高
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
@@ -42,7 +42,7 @@ export default {
 
     function createColorStyle(r, g, b) {
       // 颜色的rgba的表示方法
-      return 'rgba(' + r + ',' + g + ',' + b + ', 0.8)';
+      return "rgba(" + r + "," + g + "," + b + ", 0.8)";
     }
 
     function mixComponents(comp1, weight1, comp2, weight2) {
@@ -115,8 +115,18 @@ export default {
           var i_dot = dots.array[i];
           var j_dot = dots.array[j];
 
-          if (i_dot.x - j_dot.x < dots.distance && i_dot.y - j_dot.y < dots.distance && i_dot.x - j_dot.x > -dots.distance && i_dot.y - j_dot.y > -dots.distance) {
-            if (i_dot.x - mousePosition.x < dots.d_radius && i_dot.y - mousePosition.y < dots.d_radius && i_dot.x - mousePosition.x > -dots.d_radius && i_dot.y - mousePosition.y > -dots.d_radius) {
+          if (
+            i_dot.x - j_dot.x < dots.distance &&
+            i_dot.y - j_dot.y < dots.distance &&
+            i_dot.x - j_dot.x > -dots.distance &&
+            i_dot.y - j_dot.y > -dots.distance
+          ) {
+            if (
+              i_dot.x - mousePosition.x < dots.d_radius &&
+              i_dot.y - mousePosition.y < dots.d_radius &&
+              i_dot.x - mousePosition.x > -dots.d_radius &&
+              i_dot.y - mousePosition.y > -dots.d_radius
+            ) {
               ctx.beginPath();
               ctx.strokeStyle = averageColorStyles(i_dot, j_dot);
               ctx.moveTo(i_dot.x, i_dot.y);
@@ -160,7 +170,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-  .bgCanvas{
-    background-color: black;
-  }
+.bgCanvas {
+  background-color: black;
+}
 </style>
